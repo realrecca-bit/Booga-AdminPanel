@@ -1,0 +1,4 @@
+local RS = game.ReplicatedStorage
+local AdminPanelRemote = RS:WaitForChild("AdminPanel")
+
+AdminPanelRemote:FireServer()
